@@ -3,12 +3,14 @@ import { FaEye, FaEyeSlash, FaUserAlt } from 'react-icons/fa'
 import { Link, Navigate, useNavigate } from 'react-router-dom'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { loginAPI, registerAPI } from '../services/allAPI'
+import { googleLoginAPI, loginAPI, registerAPI } from '../services/allAPI'
 import { ToastContainer, toast } from 'react-toastify';
+import { GoogleLogin } from '@react-oauth/google'
+import { jwtDecode } from "jwt-decode";
 
 function Auth({ insideRegister }) {
   const [togglePassword, setTogglePassword] = useState(false)
-  const navigate=useNavigate()
+  const navigate = useNavigate()
 
   const formik = useFormik({
     initialValues: {
@@ -34,11 +36,43 @@ function Auth({ insideRegister }) {
     }
   })
 
-  const handleLogin=async(userData)=>{
-    const result=await loginAPI(userData)
+  const handleLogin = async (userData) => {
+    const result = await loginAPI(userData)
     console.log(result)
-    if(result.status==200){
+    if (result.status == 200) {
       toast.success("Successfully Logged In...")
+      sessionStorage.setItem("token", result.data.token)
+      sessionStorage.setItem("user", JSON.stringify(result.data.user))
+      setTimeout(() => {
+        if (result.data.user.role == "admin") {
+          navigate('/admin')
+        } else {
+          navigate('/')
+        }
+      }, 2500)
+    } else {
+      toast.error(result)
+    }
+  }
+
+  const handleRegister = async (userData) => {
+    const result = await registerAPI(userData)
+    console.log(result)
+    if (result.status == 201) {
+      toast.success("Successfully Registered... Please Login!!!")
+    } else {
+      toast.error(result)
+    }
+    navigate("/login")
+  }
+
+  const handleGoogleLogin=async (credentialResponse)=>{
+    console.log("Inside Google Login")
+    const {email,name,picture}=jwtDecode(credentialResponse.credential)
+    console.log(email,name,picture)
+    const result=await googleLoginAPI({username:name,email,password:"googlePassword",picture})
+    if(result.status==200){
+      toast.success("Login Successful")
       sessionStorage.setItem("token",result.data.token)
       sessionStorage.setItem("user",JSON.stringify(result.data.user))
       setTimeout(()=>{
@@ -48,20 +82,7 @@ function Auth({ insideRegister }) {
           navigate('/')
         }
       },2500)
-    }else{
-      toast.error(result)
     }
-  }
-
-  const handleRegister = async (userData) => {
-    const result = await registerAPI(userData)
-    console.log(result)
-    if(result.status==201){
-      toast.success("Successfully Registered... Please Login!!!")
-    }else{
-      toast.error(result)
-    }
-    navigate("/login")
   }
 
   return (
@@ -118,7 +139,14 @@ function Auth({ insideRegister }) {
             <div className='my-5 text-center'>
               <p>-------------or---------------</p>
               <div className='mt-2 flex justify-center items-center w-full'>
-                Google Authentication
+                <GoogleLogin
+                  onSuccess={credentialResponse => {
+                    handleGoogleLogin(credentialResponse)
+                  }}
+                  onError={() => {
+                    console.log('Login Failed');
+                  }}
+                />
               </div>
             </div>
           }
@@ -133,7 +161,7 @@ function Auth({ insideRegister }) {
           </div>
         </form>
       </div>
-      <ToastContainer position='top-center' theme='colored' autoClose='3000'/>
+      <ToastContainer position='top-center' theme='colored' autoClose='3000' />
     </div>
   )
 }

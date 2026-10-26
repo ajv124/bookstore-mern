@@ -17,6 +17,8 @@ import Pnf from './pages/Pnf'
 import Preloader from './components/Preloader'
 import Footer from './components/footer'
 import { useState } from 'react'
+import PaymentSuccess from './user/pages/PaymentSuccess'
+import PaymentFailure from './user/pages/PaymentFailure'
 
 function App() {
 
@@ -37,6 +39,8 @@ function App() {
 
         <Route path='/profile/:id' element={<Profile />} />
         <Route path='/books/:id' element={<View />} />
+        <Route path='/success' element={<PaymentSuccess />} />
+        <Route path='/failed' element={<PaymentFailure />} />
 
         <Route path='/admin' element={<AdminDashboard />} />
         <Route path='/admin/resources' element={<AdminResource />} />

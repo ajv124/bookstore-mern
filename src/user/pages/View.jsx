@@ -1,10 +1,23 @@
 import React, { useState } from 'react'
 import Header from '../components/Header'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { FaBackward, FaCamera } from 'react-icons/fa'
+import axiosInstance from '../../api/axiosInstance'
 
 function View() {
   const [modal, setModal] = useState(false)
+  const {id}=useParams()
+  const  [bookDetails,setBookDetails]=useState({})
+  console.log(bookDetails)
+
+  useEffect(()=>{
+    getBookDEtails()
+  },[])
+
+  const getBookDEtails=async()=>{
+    const result=await viewBookAPI(id)
+    setBookDetails(result.data)
+  }
   return (
     <>
       <Header />
@@ -21,14 +34,14 @@ function View() {
                 <h3 className='text-2xl font-bold'>Title</h3>
                 <button onClick={() => setModal(!modal)} className='text-blue-800 font-bold text-xl my-5'>Author</button>
               </div>
-              <h2 className='text-blue-800 font-bold text-xl my-5'>Author</h2>
+              <h2 className='text-blue-800 font-bold text-xl my-5'>{bookDetails?.imageURL}</h2>
               <div className='md:grid grid-cols-3 gap-5 my-10'>
-                <p className="font-bold">Publisher : </p>
-                <p className="font-bold">Language : </p>
-                <p className="font-bold">No. of Pages : </p>
-                <p className="font-bold">Category : </p>
-                <p className="font-bold">ISBN : </p>
-                <p className="font-bold">Seller : </p>
+                <p className="font-bold">Publisher : {bookDetails?.publisher}</p>
+                <p className="font-bold">Language : {bookDetails?.language}</p>
+                <p className="font-bold">No. of Pages : {bookDetails?.pages}</p>
+                <p className="font-bold">Category : {bookDetails?.category}</p>
+                <p className="font-bold">ISBN : {bookDetails?.isbn}</p>
+                <p className="font-bold">Seller : {bookDetails?.sellerMail}</p>
               </div>
               <div>
                 <h4 className="font-bold text-lg">Abstract: </h4>
@@ -57,7 +70,14 @@ function View() {
                   <p className="text-blue-600 flex items-center"><FaCamera className='me-2' />Camera clicks of the book</p>
                   <div className="md:flex flex-wrap my-4">
                     {/* duplicate image */}
-                    <img className='md:w-75 w-25 md:mt-0 mb-3' width={'80%'} height={'100px'} src="https://imgs.search.brave.com/bZciB_bWPT6baxQsHq3yJbrTkCwJXyIGb-JTiFpShME/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wcmV2/aWV3LnJlZGQuaXQv/bmV3LTIwMjctY292/ZXJzLWZvci10b3It/bWFsYXphbi1wYXBl/cmJhY2tzLXYwLW5z/OWV3a3h6dW55ZzEu/cG5nP3dpZHRoPTY0/MCZjcm9wPXNtYXJ0/JmF1dG89d2VicCZz/PTgxZGNkYjI4MTIy/Njg3MmNlMjFhYjVk/OGVlZDIyMjY4OWM4/MTc3OTI" alt="Book" />
+                    {
+                      bookDetails?.uploadImages?.length>0?
+                      bookDetails?.uploadImages.map(filename=>{
+                      <img className='md:w-75 w-25 md:mt-0 mb-3' width={'80%'} height={'100px'} src={`${axiosInstance.defaults.baseURL}/uploads/${filename}`} alt="Book" />
+                      })
+                      :
+                      <div className='my-5 font-semibold'>Image not available</div>
+                      }
                   </div>
                 </div>
               </div>
