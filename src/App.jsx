@@ -15,7 +15,7 @@ import Auth from './pages/Auth'
 import Pnf from './pages/Pnf'
 
 import Preloader from './components/Preloader'
-import Footer from './components/footer'
+import Footer from './components/Footer'
 import { useContext, useState } from 'react'
 import PaymentSuccess from './user/pages/PaymentSuccess'
 import PaymentFailure from './user/pages/PaymentFailure'
