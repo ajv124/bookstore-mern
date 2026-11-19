@@ -3,6 +3,8 @@ import Header from '../components/Header'
 import { FaBars } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { getAllBooksAPI } from '../../services/allAPI'
+import { useContext } from 'react'
+import { searchContext } from '../../contextAPI/ShareContext'
 
 function Books() {
   const [toggle, setToggle] = useState(false)
@@ -10,14 +12,14 @@ function Books() {
   const [allBooks, setAllBooks] = useState([])
   const [filteredBooks, setFilteredBooks] = useState([])
   const [categoryList, setCategoryList] = useState([])
-  const [searchKey, setSearchKey] = useState("")
+  const { searchKey, setSearchKey } = useContext(searchContext)
 
   useEffect(() => {
     const userToken = sessionStorage.getItem("token")
     if (userToken) {
       setToken(userToken)
+      getBooks()
     }
-    getBooks()
   }, [searchKey])
 
   const getBooks = async () => {
@@ -27,6 +29,7 @@ function Books() {
       setFilteredBooks(result.data)
       const categories = [...new Set(result.data.map(book => book.category))]
       setCategoryList(categories)
+      console.log(allBooks,filteredBooks,categories)
     }
   }
 
@@ -43,7 +46,7 @@ function Books() {
     if (searchKey.trim() === "") {
       setFilteredBooks(allBooks)
     } else {
-      const searched = allBooks.filter(book => 
+      const searched = allBooks.filter(book =>
         book.title.toLowerCase().includes(searchKey.toLowerCase())
       )
       setFilteredBooks(searched)
@@ -58,14 +61,13 @@ function Books() {
           <div className="flex flex-col justify-center items-center my-5">
             <h1 className="text-3xl font-bold my-5">All Books</h1>
             <div className='flex my-5'>
-              <input 
-                type="text" 
+              <input
+                type="text"
                 value={searchKey}
                 onChange={(e) => setSearchKey(e.target.value)}
-                className='p-2 border border-gray-200 w-full md:w-80' 
-                placeholder='Search by Book Title' 
+                className='p-2 border border-gray-200 w-full md:w-80'
+                placeholder='Search by Book Title'
               />
-              <button onClick={handleSearch} className='p-2 bg-blue-800 text-white ms-1'>Search</button>
             </div>
           </div>
 
@@ -80,14 +82,14 @@ function Books() {
               {/* filter category */}
               <div className={toggle ? "block" : "hidden md:block"}>
                 <div className="mt-3">
-                  <input onClick={() => filterBooks('all')} type="radio" name='filter' id='no-filter' defaultChecked />
+                  <input onChange={() => filterBooks('all')} type="radio" name='filter' id='no-filter' defaultChecked />
                   <label htmlFor="no-filter" className='ms-3'>All</label>
                 </div>
                 {/* duplicate filter category */}
                 {
                   categoryList?.map(category => (
                     <div key={category} className='mt-3'>
-                      <input onClick={() => filterBooks(category)} type="radio" name='filter' id={category} />
+                      <input onChange={() => filterBooks(category)} type="radio" name='filter' id={category} />
                       <label htmlFor={category} className='ms-3'>{category}</label>
                     </div>
                   ))

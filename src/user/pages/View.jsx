@@ -3,6 +3,8 @@ import Header from '../components/Header'
 import { Link, useParams } from 'react-router-dom'
 import { FaBackward, FaCamera } from 'react-icons/fa'
 import axiosInstance from '../../api/axiosInstance'
+import { useEffect } from 'react'
+import { viewBookAPI } from '../../services/allAPI'
 
 function View() {
   const [modal, setModal] = useState(false)
@@ -11,10 +13,10 @@ function View() {
   console.log(bookDetails)
 
   useEffect(()=>{
-    getBookDEtails()
+    getBookDetails()
   },[])
 
-  const getBookDEtails=async()=>{
+  const getBookDetails=async()=>{
     const result=await viewBookAPI(id)
     setBookDetails(result.data)
   }
@@ -26,15 +28,14 @@ function View() {
           <div className="md:grid grid-cols-4 gap-x-10">
             {/* image */}
             <div className="col-span-1">
-              <img className='w-full' src="https://imgs.search.brave.com/bZciB_bWPT6baxQsHq3yJbrTkCwJXyIGb-JTiFpShME/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly9wcmV2/aWV3LnJlZGQuaXQv/bmV3LTIwMjctY292/ZXJzLWZvci10b3It/bWFsYXphbi1wYXBl/cmJhY2tzLXYwLW5z/OWV3a3h6dW55ZzEu/cG5nP3dpZHRoPTY0/MCZjcm9wPXNtYXJ0/JmF1dG89d2VicCZz/PTgxZGNkYjI4MTIy/Njg3MmNlMjFhYjVk/OGVlZDIyMjY4OWM4/MTc3OTI" alt="book" />
+              <img className='w-full' src={bookDetails?.imageURL} alt="book" />
             </div>
             {/* book details */}
             <div className="col-span-3">
               <div className="flex justify-between mt-5 md:mt-0">
-                <h3 className='text-2xl font-bold'>Title</h3>
+                <h3 className='text-2xl font-bold'>{bookDetails?.title}</h3>
                 <button onClick={() => setModal(!modal)} className='text-blue-800 font-bold text-xl my-5'>Author</button>
               </div>
-              <h2 className='text-blue-800 font-bold text-xl my-5'>{bookDetails?.imageURL}</h2>
               <div className='md:grid grid-cols-3 gap-5 my-10'>
                 <p className="font-bold">Publisher : {bookDetails?.publisher}</p>
                 <p className="font-bold">Language : {bookDetails?.language}</p>

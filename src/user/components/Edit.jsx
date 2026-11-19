@@ -104,7 +104,6 @@ function Edit() {
                                             :
                                             <img style={{ width: "100px", height: "100px", borderRadius: '50%' }} src={`${axiosInstance.defaults.baseURL}/uploads/${{ existingPicture }}`} alt="No Image" />
                                 }
-                                <button className="bg-black text-white px-3 py-4 rounded z-53 fixed" style={{ marginLeft: '250px', marginTop: '-29px' }}><FaPen /></button>
                             </label>
                             {!imageFile && <div className='mt-5 text-yellow-500 text-sm'>*Only Accepts Image File</div>}
                             {/* username */}

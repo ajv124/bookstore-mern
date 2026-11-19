@@ -24,7 +24,7 @@ export const getHomeBooksAPI=async()=>{
     return await apiService("GET",`/home-books`,{})
 }
 
-export const getAllBooksAPI=async()=>{
+export const getAllBooksAPI=async(searchKey)=>{
     return await apiService("GET",`/all-books?search=${searchKey}`,{})
 }
 
@@ -42,4 +42,24 @@ export const deleteUserBookAPI=async(bookId)=>{
 
 export const viewBookAPI=async (id)=>{
     return await apiService("GET",`/view-book/${id}`,{})
+}
+
+export const adminUpdateAPI=async(adminId,adminData)=>{
+    return await apiService("PUT",`/admin/${adminId}`,adminData)
+}
+
+export const userListAPI=async()=>{
+    return await apiService('GET',`/user-list`,{})
+}
+
+export const bookListAPI=async()=>{
+    return await apiService('GET',`/book-list`,{})
+}
+
+export const editBookStatusAPI=async(id)=>{
+    return await apiService('PUT',`/book/${id}`,{})
+}
+
+export const getBookDetailsAIAPI=async (title)=>{
+    return await apiService('POST','/book-ai',{title})
 }

@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { FaFacebook, FaInstagram, FaPowerOff, FaTwitter, FaUser } from 'react-icons/fa'
 import { IoMenu } from 'react-icons/io5'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { FaGear } from "react-icons/fa6";
 import axiosInstance from '../../api/axiosInstance'
+import { routeContext } from '../../contextAPI/RouteGuard';
+
 function Header() {
+  const {role,setRole,authorizedUser,setAuthorizedUser}=useContext(routeContext)
+  const navigate = useNavigate()
   const [toggle, setToggle] = useState(false)
   const [token, setToken] = useState("")
   const [dp, setDp] = useState("")
@@ -20,6 +24,17 @@ function Header() {
       setUserId(user._id)
     }
   }, [token])
+
+  const logout = () => {
+    sessionStorage.clear()
+    setAuthorizedUser(false)
+    setToggle(false)
+    token, setToken("")
+    setDp("")
+    setUserId("")
+    setDropDown("false")
+    navigate('/')
+  }
 
   return (
     <>
@@ -46,14 +61,14 @@ function Header() {
               :
               <div>
                 <button onClick={() => setDropDown(!dropDown)} className='shadow-sm rounded p-1 hover:bg-gray-200'>
-                  <img width={'40px'} height={'40px'} style={{ borderRadius: '50%' }} src={dp == "" ? "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png" : dp.startsWith("https://lh3.googleusercontent.com/")?dp:`${axiosInstance.defaults.baseURL}/uploads/${dp}`} alt="profile" />
+                  <img width={'40px'} height={'40px'} style={{ borderRadius: '50%' }} src={dp == "" ? "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png" : dp.startsWith("https://lh3.googleusercontent.com/") ? dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`} alt="profile" />
                 </button>
                 {/* dropDown menu */}
                 {
                   dropDown &&
                   <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
-                    <Link to={`/profile/${userId}`} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaGear /></Link>
-                    <button className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />Logout</button>
+                    <Link to={`/profile/${userId}`} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaGear />Settings</Link>
+                    <button onClick={logout} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />Logout</button>
                   </div>
                 }
               </div>
@@ -72,14 +87,14 @@ function Header() {
               :
               <div>
                 <button onClick={() => setDropDown(!dropDown)} className='shadow-sm rounded p-1 hover:bg-gray-200'>
-                  <img width={'40px'} height={'40px'} style={{ borderRadius: '50%' }} src={dp == "" ? "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png" : dp.startsWith("https://lh3.googleusercontent.com/")?dp:`${axiosInstance.defaults.baseURL}/uploads/${dp}`} alt="profile" />
+                  <img width={'40px'} height={'40px'} style={{ borderRadius: '50%' }} src={dp == "" ? "https://static.vecteezy.com/system/resources/thumbnails/019/879/186/small_2x/user-icon-on-transparent-background-free-png.png" : dp.startsWith("https://lh3.googleusercontent.com/") ? dp : `${axiosInstance.defaults.baseURL}/uploads/${dp}`} alt="profile" />
                 </button>
                 {/* dropDown menu */}
                 {
                   dropDown &&
                   <div className="absolute right-0 z-10 mt-2 w-40 bg-white shadow rounded ring-1 ring-black/5 p-2 focus:outline-hidden">
-                    <Link to={`/profile/${userId}`} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaGear /></Link>
-                    <button className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />Logout</button>
+                    <Link to={`/profile/${userId}`} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaGear />Settings</Link>
+                    <button onClick={logout} className='flex items-center text-gray-600 text-sm px-3 py-2'><FaPowerOff className='me-1' />Logout</button>
                   </div>
                 }
               </div>
